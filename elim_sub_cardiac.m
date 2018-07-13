@@ -1,4 +1,4 @@
-function s_filt = elim_sub_cardiac(old_data, fpass, fstop, dpass, dstop)
+function s_filt = elim_sub_cardiac(old_data, fpass, fstop, dpass, dstop, rf)
 %% Filter pre-processed signal to remove frequencies below cardiac freqs
 
 fs = old_data.fs;
@@ -8,11 +8,11 @@ s = old_data;
 s.v(isnan(s.v)) = mean(s.v(~isnan(s.v)));
 
 %% Downsample
-d_s = downsample_data(s, up);
+d_s = downsample_data(s, rf);
 
 %% Make filter
 flag  = 'scale';        % Sampling Flag
-[N,Wn,BETA,TYPE] = kaiserord([sub_cardiac_fstop sub_cardiac_fpass]/(d_s.fs/2), [1 0], [sub_cardiac_dstop sub_cardiac_dpass]);
+[N,Wn,BETA,TYPE] = kaiserord([fstop fpass]/(d_s.fs/2), [1 0], [dstop dpass]);
 b  = fir1(N, Wn, TYPE, kaiser(N+1, BETA), flag);   % Calculate the coefficients using the FIR1 function.
 AMfilter = dfilt.dffir(b);
 

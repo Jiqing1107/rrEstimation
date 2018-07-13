@@ -33,7 +33,7 @@ for subj = subj_list
     s = ehf;
     fs = ehf.fs;
     
-    pdt = elim_sub_cardiac(s, sub_cardiac_fpass, sub_cardiac_fstop, sub_cardiac_dpass, sub_cardiac_dstop, filt_resample_fs);
+    pdt = elim_sub_cardiac(s, sub_cardiac_fpass, sub_cardiac_fstop, sub_cardiac_dpass, sub_cardiac_dstop);
     
     [peaks,onsets] = IMS(pdt, fs);
     
@@ -53,7 +53,7 @@ for subj = subj_list
     rel_data.timings = sr.timings;
 
     %% PPG Peaks
-    s_fpt = FPt(rel_data);
+    s_fpt = FPt(rel_data)
 
     %
 

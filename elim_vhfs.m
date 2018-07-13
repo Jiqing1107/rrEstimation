@@ -5,7 +5,7 @@ function s_filt = elim_vhfs(s, fs, fpass, fstop, dpass, dstop)
 s(isnan(s)) = mean(s(~isnan(s)));
 
 %% Check to see if sampling freq is at least twice the freq of interest
-if (filt_characteristics.Fpass/(fs/2)) >= 1
+if (fpass/(fs/2)) >= 1
     % then the fs is too low to perform this filtering
     s_filt = s;
     return
