@@ -19,12 +19,14 @@ subj_list = 1:length(data);
 
 for subj = subj_list
     
+    % stage 1: EHF (eliminate high frequency)
     s = data(subj).ppg.v;
     
     ehf.fs = data(subj).ppg.fs;
     ehf.v = elim_vhfs(s, ehf.fs, vhf_fpass, vhf_fstop, vhf_dpass, vhf_dstop);
     ehf.t = (1/ehf.fs)*(1:length(ehf.v));
     
+    % stage 2: PDT
     s = ehf;
     fs = ehf.fs;
     
@@ -34,12 +36,24 @@ for subj = subj_list
     
     %Save segmentation results 
     sr.fs = fs;
-    sr.p.v = s.v(peaks);
-    sr.p.t = s.t(peaks);
-    sr.tr.v = s.v(onsets);
-    sr.tr.t = s.t(onsets);
+    sr.p.v = s.v(peaks);    % peak value
+    sr.p.t = s.t(peaks);    % peak time
+    sr.tr.v = s.v(onsets);  % onset value
+    sr.tr.t = s.t(onsets);  % onset time
     sr.timings.t_start = s.t(1);
     sr.timings.t_end = s.t(end);
+
+    % Stage 3: FPt
+    rel_data.beats = sr;
+    rel_data.s = s;
+    rel_data.fs = fs;
+    rel_data.timings = sr.timings;
+
+    %% PPG Peaks
+    s_fpt = FPt(rel_data)
+
+    %
+
     
     
     
