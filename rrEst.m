@@ -50,9 +50,10 @@ for subj = subj_list
     rel_data.timings = sr.timings;
 
     %% PPG Peaks
-    s_fpt = FPt(rel_data)
+    s_fpt = FPt(rel_data);
 
-    %
+    % Stage 4: FMe
+    s_fme = FMe(s, s_fpt);
 
     
     
