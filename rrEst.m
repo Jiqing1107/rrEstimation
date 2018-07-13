@@ -55,7 +55,8 @@ for subj = subj_list
     %% PPG Peaks
     s_fpt = FPt(rel_data);
 
-    %
+    % Stage 4: FMe
+    s_fme = FMe(s, s_fpt);
 
 end   
     
