@@ -73,7 +73,7 @@ for subj = subj_list
      % Stage 6: ELF (eliminate low frequency)
      s_elf.t = s_rs.t;
      try
-        s_elf.v = elim_vlfs(s_rs, up);
+        s_elf.v = elim_vlfs(s_rs, vlf_fpass, vlf_fstop, vlf_dpass, vlf_dstop);
      catch
         % if there aren't enough points to use the filter, simply carry forward the previous data
        s_elf.v = s_rs.v;
