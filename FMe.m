@@ -40,7 +40,6 @@ feat_data.timings = rel_data.timings;
 
 end
 
-end
 
 function feat_data = calc_am(peaks, onsets, fs, sig_data)
 
