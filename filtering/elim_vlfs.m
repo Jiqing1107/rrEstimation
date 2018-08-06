@@ -1,4 +1,4 @@
-function s_filt = elim_vlfs(old_data, fpass, fstop, dpass, dstop)
+function s_filt = elim_vlfs(old_data, elim_vlf)
 %% Filter pre-processed signal to remove frequencies below resp
 
 fs = old_data.fs;
@@ -9,7 +9,7 @@ s.v(isnan(s.v)) = mean(s.v(~isnan(s.v)));
 
 %% Make filter
 flag  = 'scale';
-[N,Wn,BETA,TYPE] = kaiserord([up.paramSet.elim_vlf.Fstop up.paramSet.elim_vlf.Fpass]/(fs/2), [1 0], [up.paramSet.elim_vlf.Dstop up.paramSet.elim_vlf.Dpass]);
+[N,Wn,BETA,TYPE] = kaiserord([elim_vlf.Fstop elim_vlf.Fpass]/(fs/2), [1 0], [elim_vlf.Dstop elim_vlf.Dpass]);
 b  = fir1(N, Wn, TYPE, kaiser(N+1, BETA), flag);
 AMfilter = dfilt.dffir(b);
 

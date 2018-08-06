@@ -1,19 +1,25 @@
 load('mimicii_data.mat');
-
+addpath(genpath('./'));
 % frequency at which to sample filter-based respiratory signals
 filt_resample_fs = 25;
 % frequency at which to resample feature-based respiratory signals
 feat_resample_fs = 5;
 
-vlf_fpass = 0.157;  % in Hz
-vlf_fstop = 0.02;   % in Hz
-vlf_dpass = 0.05;
-vlf_dstop = 0.01;
+elim_vlf_param.Fpass = 0.157;  % in Hz
+elim_vlf_param.Fstop = 0.02;   % in Hz
+elim_vlf_param.Dpass = 0.05;
+elim_vlf_param.Dstop = 0.01;
 
-vhf_fpass = 38.5;  % in HZ
-vhf_fstop = 33.12;  % in HZ  
-vhf_dpass = 0.05;
-vhf_dstop = 0.01;
+elim_vhf_param.Fpass = 38.5;  % in HZ
+elim_vhf_param.Fstop = 33.12;  % in HZ  
+elim_vhf_param.Dpass = 0.05;
+elim_vhf_param.Dstop = 0.01;
+
+% Filter characteristics: Eliminate HFs (above resp freqs)
+elim_hf_param.Fpass = 1.2;  % in Hz
+elim_hf_param.Fstop = 0.8899;  % in Hz     (1.2 and 0.8899 provide a -3dB cutoff of 1 Hz)
+elim_hf_param.Dpass = 0.05;
+elim_hf_param.Dstop = 0.01;
 
 sub_cardiac_fpass = 0.63;  % in Hz
 sub_cardiac_fstop = 0.43;
@@ -28,7 +34,7 @@ for subj = subj_list
     s = data(subj).ppg.v;
     
     s_ehf.fs = data(subj).ppg.fs;
-    s_ehf.v = elim_vhfs(s, s_ehf.fs, vhf_fpass, vhf_fstop, vhf_dpass, vhf_dstop);
+    s_ehf.v = elim_vhfs(s, s_ehf.fs, elim_vhf_param);
     s_ehf.t = (1/s_ehf.fs)*(1:length(s_ehf.v));
     
     % stage 2: PDT
@@ -61,25 +67,10 @@ for subj = subj_list
     s_fme = FMe(s, s_fpt);
     
     % Stage 5: RS
-    s_rs = lin(s_fme, feat_resample_fs);
-    s_rs.fs = fs;
-    try
-       s_rs = bpf_signal_to_remove_non_resp_freqs(s_rs, s_rs.fs, vlf_fpass, vlf_fstop, vlf_dpass, vlf_dstop);
-    catch
-       % if there aren't enough samples, then don't BPF:
-       s_rs = s_rs;
-    end
+    s_rs = RS(s_fme, feat_resample_fs, elim_vlf_param, elim_hf_param);
     
      % Stage 6: ELF (eliminate low frequency)
-     s_elf.t = s_rs.t;
-     try
-        s_elf.v = elim_vlfs(s_rs, vlf_fpass, vlf_fstop, vlf_dpass, vlf_dstop);
-     catch
-        % if there aren't enough points to use the filter, simply carry forward the previous data
-       s_elf.v = s_rs.v;
-     end
-     s_elf.fs = s_rs.fs;
-
+     s_elf = ELF(s_rs, elim_vlf_param);
 
 end   
     
